@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>🍌 Banana Ripeness Classifier</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="container">
+    <h1>🍌 Banana Ripeness Classifier</h1>
+    <p>Upload a banana image and discover its ripeness!</p>
+
+    <input type="file" id="imageInput">
+    <button onclick="predict()">Predict</button>
+
+    <div id="result" class="result-box" style="display:none;">
+        <img id="preview"/>
+        <h2 id="prediction"></h2>
+        <p id="confidence"></p>
+    </div>
+</div>
+
+<script>
+function predict() {
+    let fileInput = document.getElementById("imageInput");
+    let file = fileInput.files[0];
+
+    let formData = new FormData();
+    formData.append("file", file);
+
+    fetch("/predict", {
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById("result").style.display = "block";
+        document.getElementById("preview").src = "data:image/png;base64," + data.image;
+        document.getElementById("prediction").innerText = "Prediction: " + data.prediction;
+        document.getElementById("confidence").innerText = "Confidence: " + data.confidence + "%";
+    });
+}
+</script>
+
+</body>
+</html>
